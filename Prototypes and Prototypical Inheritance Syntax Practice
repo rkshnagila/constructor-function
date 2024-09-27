@@ -1,0 +1,31 @@
+
+//  Define Animal constructor
+function Animal() {
+    this.type = "Animal";
+}
+
+//  Add sound method to Animal prototype
+Animal.prototype.sound = function() {
+    console.log("Animal sound");
+};
+
+// Define Dog constructor that inherits from Animal
+function Dog() {
+    Animal.call(this);  // Inherit properties from Animal
+    this.type = "Dog";  // Optional: override type for Dog
+}
+
+//  Ensure Dog.prototype inherits from Animal.prototype
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+//  Override sound method in Dog prototype
+Dog.prototype.sound = function() {
+    console.log("Bark");
+};
+
+//  Create an instance of Dog
+let myDog = new Dog();
+
+//  Call the sound method on myDog
+myDog.sound();  // Output: "Bark"
