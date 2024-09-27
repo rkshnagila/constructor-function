@@ -1,0 +1,40 @@
+
+//  Person constructor
+function Person(name, age) {
+    this.name = name;
+    this.age = age;
+}
+
+//  Add introduce method to Person prototype
+Person.prototype.introduce = function() {
+    console.log(`Hi, my name is ${this.name} and I am ${this.age} years old.`);
+};
+
+//  Employee constructor that inherits from Person
+function Employee(name, age, jobTitle) {
+    Person.call(this, name, age);  // Inherit Person's properties
+    this.jobTitle = jobTitle;
+}
+
+//  Ensure Employee.prototype inherits from Person.prototype
+Employee.prototype = Object.create(Person.prototype);
+Employee.prototype.constructor = Employee;
+
+//  Add work method to Employee prototype
+Employee.prototype.work = function() {
+    console.log(`${this.name} is working as a ${this.jobTitle}.`);
+};
+
+// Demonstration
+// Create an instance of Person
+let person1 = new Person("Alice", 30);
+
+// Create an instance of Employee
+let employee1 = new Employee("Bob", 40, "Software Engineer");
+
+// Call introduce on both instances
+person1.introduce();  // Output: Hi, my name is Alice and I am 30 years old.
+employee1.introduce();  // Output: Hi, my name is Bob and I am 40 years old.
+
+// Call work on the Employee instance
+employee1.work();  // Output: Bob is working as a Software Engineer.
