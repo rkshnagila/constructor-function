@@ -1,0 +1,91 @@
+// Car constructor
+function Car(make, model, year, type, isAvailable = true) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+    this.type = type;  // SUV, Sedan, etc.
+    this.isAvailable = isAvailable;
+}
+
+// Customer constructor
+function Customer(name) {
+    this.name = name;
+    this.rentedCars = [];
+}
+
+// Rent a car method
+Customer.prototype.rentCar = function(car) {
+    if (car.isAvailable) {
+        car.isAvailable = false;
+        this.rentedCars.push(car);
+        console.log(`${this.name} rented ${car.make} ${car.model}.`);
+    } else {
+        console.log(`Sorry, ${car.make} ${car.model} is already rented.`);
+    }
+};
+
+// Return a car method
+Customer.prototype.returnCar = function(car) {
+    if (this.rentedCars.includes(car)) {
+        setTimeout(() => {
+            car.isAvailable = true;
+            this.rentedCars = this.rentedCars.filter(rentedCar => rentedCar !== car);
+            console.log(`${this.name} returned ${car.make} ${car.model}.`);
+        }, 2000);  // Simulate delay of 2 seconds
+    } else {
+        console.log(`${this.name} does not have this car rented.`);
+    }
+};
+
+// PremiumCustomer constructor
+function PremiumCustomer(name, discountRate = 10) {
+    Customer.call(this, name);  // Call parent constructor
+    this.discountRate = discountRate;
+}
+
+// Inherit from Customer
+PremiumCustomer.prototype = Object.create(Customer.prototype);
+PremiumCustomer.prototype.constructor = PremiumCustomer;
+
+// Function to calculate rental price
+function calculateRentalPrice(car, days, customer) {
+    const basePrice = 50;
+    let typeMultiplier = car.type === 'SUV' ? 1.5 : 1;  // Higher rate for SUVs
+    let rentalPrice = basePrice * days * typeMultiplier;
+
+    if (customer instanceof PremiumCustomer) {
+        rentalPrice *= (1 - customer.discountRate / 100);  // Apply discount
+    }
+
+    return rentalPrice;
+}
+
+// Maintenance function
+function Maintenance(car, delay) {
+    console.log(`${car.make} ${car.model} is under maintenance.`);
+    setTimeout(() => {
+        car.isAvailable = true;
+        console.log(`${car.make} ${car.model} is now available after maintenance.`);
+    }, delay);
+}
+
+// Demonstration
+let car1 = new Car("Toyota", "Corolla", 2020, "Sedan");
+let car2 = new Car("Honda", "CR-V", 2021, "SUV");
+let car3 = new Car("Ford", "Focus", 2019, "Sedan");
+
+let customer1 = new Customer("John");
+let customer2 = new PremiumCustomer("Sarah", 15);
+
+customer1.rentCar(car1);
+customer2.rentCar(car2);
+
+let price1 = calculateRentalPrice(car1, 3, customer1);
+let price2 = calculateRentalPrice(car2, 3, customer2);
+console.log(`John's rental price: $${price1}`);
+console.log(`Sarah's rental price: $${price2}`);
+
+customer1.returnCar(car1);
+customer2.returnCar(car2);
+
+Maintenance(car3, 3000);  // Ford Focus goes for 3-second maintenance
